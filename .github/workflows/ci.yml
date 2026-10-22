@@ -1,0 +1,141 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # CI-only credentials for the throwaway PostgreSQL service container.
+  DATABASE_URL: postgresql+psycopg://cgq_app:cgq_ci_password@localhost:5432/cgq
+  TEST_DATABASE_URL: postgresql+psycopg://cgq_app:cgq_ci_password@localhost:5432/cgq_test
+  CORS_ORIGINS: http://localhost:5173
+
+jobs:
+  backend:
+    name: Backend (lint, migrations, seed validation, pytest)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: cgq_app
+          POSTGRES_PASSWORD: cgq_ci_password
+          POSTGRES_DB: cgq
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cgq_app -d cgq"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Lint and format check
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Validate question bank seed files
+        run: python -m app.cli validate
+      - name: Create test database
+        run: PGPASSWORD=cgq_ci_password psql -h localhost -U cgq_app -d cgq -c "CREATE DATABASE cgq_test"
+      - name: Run migrations
+        run: |
+          alembic upgrade head
+          alembic check
+      - name: Seed (twice, to prove idempotency) and check database
+        run: |
+          python -m app.cli seed
+          python -m app.cli seed
+          python -m app.cli check-db
+      - name: Migration downgrade/upgrade round trip
+        run: |
+          alembic downgrade base
+          alembic upgrade head
+      - name: Tests
+        run: pytest -q
+
+  frontend:
+    name: Frontend (typecheck, lint, unit tests, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    name: End-to-end (Playwright, full stack)
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: cgq_app
+          POSTGRES_PASSWORD: cgq_ci_password
+          POSTGRES_DB: cgq
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cgq_app -d cgq"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Backend environment, migrations and seed
+        working-directory: backend
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+          .venv/bin/alembic upgrade head
+          .venv/bin/python -m app.cli seed
+      - name: Install frontend and browser
+        working-directory: frontend
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Playwright tests
+        working-directory: frontend
+        env:
+          CI: "true"
+        run: npx playwright test
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 7
