@@ -1,0 +1,43 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node / frontend
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Local PostgreSQL cluster (scripts/dev-db.ps1) and other local state
+.local/
+*.sqlite
+*.db
+
+# Source PDF: kept locally as a data-preparation input only; not redistributed.
+# The validated seed files in data/seed/ are sufficient to run the app.
+/*.pdf
+data/source/
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea/

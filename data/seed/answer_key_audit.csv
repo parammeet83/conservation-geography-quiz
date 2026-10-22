@@ -1,0 +1,121 @@
+week,question_no,pdf_page,question_id,correct_option_id,correct_source_label,correct_option_text,font_bold_check,render_stroke_check,trd_answer_key_check,manual_visual_review,verification_status,notes
+1,1,1,47b408be-6d95-5108-96ff-1eba53ebe1bf,93c8ca26-9d6c-5887-b22c-78c16e9ac68d,b,migration,pass,pass,pass,agree,verified,render stroke ratio 1.47
+1,2,1,7ade6bad-ca1f-546b-8064-a88d5feb43d5,a73935e9-9a8f-5f5a-b3be-25cc68f60fe7,a,Alexander von Humboldt,pass,pass,pass,agree,verified,render stroke ratio 1.30
+1,3,1,98b945ae-047e-5dac-92d8-00eec5b3636a,44b7355a-e1b5-5cca-b282-e0afd32e2786,d,allelopathy,pass,pass,pass,agree,verified,render stroke ratio 1.38
+1,4,1,3c342e06-e671-5e10-b247-5c13bf0f841d,57f9f119-65b1-50f7-9879-a617dff79b64,a,Habitat degradation,pass,pass,pass,agree,verified,render stroke ratio 1.48
+1,5,1,fff3f78d-e059-5bbf-9e3c-6e6ae513e97f,af17a672-ba96-5c0e-b0c7-3aab143cb614,d,ecology,pass,pass,pass,agree,verified,render stroke ratio 1.52
+1,6,2,5edf8503-48b0-51f3-93f3-54354dc4826a,700e0269-a9c7-553b-ae45-2d33d731b10d,a,Liebig’s law of the minimum,pass,pass,pass,agree,verified,render stroke ratio 1.44
+1,7,2,a5864ac9-58a4-5f8e-973f-97a8c53b3e08,9134e30b-aed3-5c23-9910-7590bd417b12,a,together,pass,pass,pass,agree,verified,render stroke ratio 1.48
+1,8,2,d51eb088-9fe6-5b67-bd2b-2d575789b0d1,52eb7df8-5321-548d-89d1-78a766898946,b,to keep,pass,pass,pass,agree,verified,render stroke ratio 1.44
+1,9,2,6398f251-d54a-582d-99df-a2760cc2bcce,48e3c03c-2876-529b-bfa6-7bc6771d6a99,b,Meteorology,pass,pass,pass,agree,verified,render stroke ratio 1.41
+1,10,2,763f0a00-41d2-52c6-afba-5159c16f3eb8,a5bb0154-6a9c-527d-bd13-6cb207648a0c,d,pull factor,pass,pass,pass,agree,verified,render stroke ratio 1.37
+2,1,3,0614f869-5b94-5634-b187-62ec4302e173,d6fd5272-fbc5-53f8-8770-3ae33d77d7b7,b,Stratovolcano,pass,pass,pass,agree,verified,render stroke ratio 1.38
+2,2,3,622579e4-3d38-5353-a111-a763f7a2a4fd,716b369e-f39e-55f9-8a12-05ffe39456c9,b,Mantle,pass,pass,pass,agree,verified,render stroke ratio 1.38
+2,3,3,21d972a3-fc80-5550-863d-b7d6c53f0575,08e1ef2c-aee3-5fbd-9d45-ca9392033f64,c,inclusion study,pass,pass,pass,agree,verified,render stroke ratio 1.37
+2,4,3,4b6ba4ab-a95e-5b9d-9bac-3c293c37c7fc,a1751410-b6fa-566e-9ff6-5411e6ee52fb,c,Small bodies formed from gas and dust that can accrete into planets,pass,pass,pass,agree,verified,render stroke ratio 1.48
+2,5,3,ca255dce-9947-5181-a720-7f88eb655dea,1b2fb239-b518-558c-9b8f-d388e87d933c,a,Shield volcano,pass,pass,pass,agree,verified,render stroke ratio 1.34
+2,6,4,e58de7ae-f13b-5b49-9b22-39c82815e56a,90500aae-b777-53df-9d8a-6cf66793a774,a,They are longitudinal in nature,pass,pass,pass,agree,verified,render stroke ratio 1.41
+2,7,4,2619ce99-9db8-5da7-8b17-7e96ac6d27c1,0cddcf32-2938-5304-87a1-9f3175eca519,a,Principle of fossil succession,pass,pass,pass,agree,verified,render stroke ratio 1.52
+2,8,4,2f32cdda-d8ae-544a-b954-57164715fda2,9f447202-169d-569e-925b-a1ccc985b3c2,d,"Mercury, Venus, Earth, Mars",pass,pass,pass,agree,verified,render stroke ratio 1.45
+2,9,4,2467e071-975b-56e7-bde0-45867b14aed8,6121f4b3-ec20-5cd1-b544-956bb7eee3a0,c,Principle of lateral continuity,pass,pass,pass,agree,verified,render stroke ratio 1.53
+2,10,4,e329b3a5-5901-5754-a45d-7b23e7296de5,3414401f-5485-5d19-ab0d-4ead0f56c922,d,Flood basalt province,pass,pass,pass,agree,verified,render stroke ratio 1.37
+3,1,5,81901a5e-8698-54f0-971b-9e71b19dade9,8d85838f-64c9-5d6d-b13b-b3ad9bc6bd2b,a,siliciclastic rock,pass,pass,pass,agree,verified,render stroke ratio 1.33
+3,2,5,75bd5486-c5d5-5f6b-9a3c-824e51f3a0da,c09858e3-c5f8-52f2-beeb-a571c06b99f7,a,chemical weathering,pass,pass,pass,agree,verified,render stroke ratio 1.42
+3,3,5,dc48301f-ff97-5ffe-9247-2752d974a914,c895aa53-33c3-5a73-a0b7-d82ae2a7db72,a,amphiboles,pass,pass,pass,agree,verified,render stroke ratio 1.47
+3,4,5,78a0f5b0-f520-5e12-82a3-6e5d2563044f,0fcafad7-0bb3-5387-a27e-ff412e6b34ff,a,chemical weathering,pass,pass,pass,agree,verified,render stroke ratio 1.42
+3,5,5,d81c8cd1-0f15-5f13-b556-ce75d3eb1226,31fdee62-1709-53d2-90e1-59633d55ad18,d,deposition,pass,pass,pass,agree,verified,render stroke ratio 1.45; spans pages 5-6
+3,6,6,7ab41406-2337-5b24-aad4-ad8cdb595ec0,735e19b1-1391-5704-99a5-79cc36cdc5ed,c,Streak shows the colour of the powdered mineral and may reduce the effect of minor impurities,pass,pass,pass,agree,verified,render stroke ratio 1.46
+3,7,6,f02c6b82-4b6b-5812-9d7c-d85cdfcf8823,4af99e13-4c7c-5cc3-b78e-39753a77c80f,d,Stability of sea level,pass,pass,pass,agree,verified,render stroke ratio 1.52
+3,8,6,b9086373-0dc6-5ae0-9400-bdb02646f59c,0d87a64c-40e2-5681-9483-5ae6f38df888,a,siliciclastic rock,pass,pass,pass,agree,verified,render stroke ratio 1.33
+3,9,6,a1ffe4dd-6d4c-5455-a047-c7f383599e69,a3e1fa25-f5e8-56e6-8b68-8b02e41a9987,a,cleavage,pass,pass,pass,agree,verified,render stroke ratio 1.52
+3,10,6,d3aea43e-eb54-553b-a7f2-a97c9d35d7db,af5556d7-9022-5b65-8df1-2edfb6470fb4,d,coarse grained igneous rocks,pass,pass,pass,agree,verified,render stroke ratio 1.48; spans pages 6-7
+4,1,8,31dfad11-b8c1-50bc-8b3a-b5f629fda104,a10a33cf-92fe-5582-8ea1-fdb4b45e9716,a,mitigation,pass,pass,pass,agree,verified,render stroke ratio 1.37
+4,2,8,a583c89b-4ae7-50fa-8c74-b8dbf4025325,8d5f5331-9777-52e6-a2ef-3a2362a6605e,d,sea level,pass,pass,pass,agree,verified,render stroke ratio 1.53
+4,3,8,b2330368-29f5-540a-bbee-206b847d8e59,506bb35e-58a3-5576-bcc4-9d0490268085,a,adaptation,pass,pass,pass,agree,verified,render stroke ratio 1.43
+4,4,8,b92eeba6-dea7-584c-979a-3515ea4ce88a,3d63cc26-19e5-5af6-b66d-0268ba684d85,b,resilience to climate changes,pass,pass,pass,agree,verified,render stroke ratio 1.44
+4,5,8,556aa01a-66d4-5f98-ba0a-d134751e8aec,eee6f6e8-4879-57f9-80bb-39bd8544c8ee,b,Stratosphere,pass,pass,pass,agree,verified,render stroke ratio 1.50; spans pages 8-9
+4,6,9,243ea13a-ed84-53de-81f4-5460e99455a7,c7309fa9-3299-5d41-81de-e9b888fed4f6,c,advection,pass,pass,pass,agree,verified,render stroke ratio 1.51
+4,7,9,91ec67e0-40da-577b-84ee-af92ca713102,ee4f29a8-7a44-55ea-b645-bc465c03957b,c,30 years,pass,pass,pass,agree,verified,render stroke ratio 1.44
+4,8,9,8f755403-fad0-5eaa-b2b5-2f3e9f2a9fe5,a6585121-8863-51d6-8fbb-86dc52b9f7c8,c,Mesosphere,pass,pass,pass,agree,verified,render stroke ratio 1.47
+4,9,9,643b5cab-e9a9-59dd-8a7c-8a35c7516fa1,a50eeb3d-caa3-5745-b6a2-fce94f271788,b,the weight of air above the point of measurement,pass,pass,pass,agree,verified,render stroke ratio 1.51
+4,10,9,df78d0ec-d344-5f4a-9a16-0379537a2375,19fabb91-1576-57e0-8131-1d27019e71dc,d,mT,pass,pass,pass,agree,verified,render stroke ratio 1.26; spans pages 9-10
+5,1,11,80f5d53c-f221-56b5-8fa2-edf020f507c8,617bf1fc-2cb7-52a0-af2e-d63399a3cf6f,d,Clay and silt,pass,pass,pass,agree,verified,render stroke ratio 1.38
+5,2,11,09ead211-57cf-5548-81e8-a13e052bba2d,bba5f89a-3f2c-50d4-af38-5f59b0fe011e,d,abyssal plain,pass,pass,pass,agree,verified,render stroke ratio 1.49
+5,3,11,2dc68039-c1d4-5aae-80bb-752a0df7591c,262e0061-b720-50ba-9f4f-df8c44372602,b,mid-oceanic ridge,pass,pass,pass,agree,verified,render stroke ratio 1.46
+5,4,11,87269f0a-9133-5eaa-8682-e21d570bde33,bee08df4-501e-5e1e-9d5e-f6ec7f553f3b,c,They receive both light and nutrients,pass,pass,pass,agree,verified,render stroke ratio 1.43
+5,5,11,e73e5aca-74b9-5dc6-9c1c-20eb54be3938,0f419c2f-613c-55cf-8b86-4be001d2947e,b,The difference between sea level at high tide and low tide,pass,pass,pass,agree,verified,render stroke ratio 1.49; spans pages 11-12
+5,6,12,bff9f1c2-63d1-53bf-b121-d97a243e0657,95d4b743-51ba-5633-aa4f-bd948f5f5284,d,Sublimation,pass,pass,pass,agree,verified,render stroke ratio 1.39
+5,7,12,47950080-e9ac-533a-9461-06ea70d91fa0,9227bc17-56c3-5e9a-a142-f8b111f23cd2,b,"Hydrostatic pressure, salinity and temperature",pass,pass,pass,agree,verified,render stroke ratio 1.46
+5,8,12,cb1ed51b-d1ea-58e1-b737-4cee9768b57a,b0c627be-cb2f-5b08-87a7-69a9712809ff,d,submarine canyon,pass,pass,pass,agree,verified,render stroke ratio 1.43
+5,9,12,a6ffa497-4222-508d-af71-0b682cdb93ac,2cf0d826-c199-55b2-8a23-0e47adca2f60,a,0-1 degree,pass,pass,pass,agree,verified,render stroke ratio 1.39
+5,10,12,6d4cf4f6-a510-51a3-b8ac-6742ae2e3a26,b87f35cc-0a0c-5d14-93a3-70e359f79209,b,isohaline curves,pass,pass,pass,agree,verified,render stroke ratio 1.47
+6,1,13,09a37ed2-92f9-5a6a-af60-c36822e4046d,08a5c3fc-bffa-55b1-829f-6d746dc683d2,b,water on opposite sides flows in different directions,pass,pass,pass,agree,verified,render stroke ratio 1.44
+6,2,13,306091df-d81b-5788-b44a-6b4ffec29d8e,1f785056-0051-5a27-bb9c-8e7bde88da0c,c,accordant,pass,pass,pass,agree,verified,render stroke ratio 1.37
+6,3,13,8080a068-3265-5778-b2a7-05b52c9283df,43f8b071-982a-54d1-85a6-aadca936bf81,b,dendritic drainage,pass,pass,pass,agree,verified,render stroke ratio 1.40
+6,4,13,2f15c44d-2745-5e43-ad12-47785be8486e,8cf7ac2d-19bb-5e7d-a5a7-1b7970538c95,a,discordant drainage,pass,pass,pass,agree,verified,render stroke ratio 1.46
+6,5,13,919251c2-3bcb-5b7a-9bb2-84b05932f8f7,af051b24-3752-54d2-b41c-3be8f4aec810,a,sedimentary rocks,pass,pass,pass,agree,verified,render stroke ratio 1.44; spans pages 13-14
+6,6,14,92141313-6816-594f-b59d-d8d7454712e1,0fca44ac-fdad-5966-b776-bdb4f8590791,c,Narmada and Tapi,pass,pass,pass,agree,verified,render stroke ratio 1.42
+6,7,14,cc359480-72df-50f6-8c12-7a5a7a9ca35e,be49392c-015a-5db2-873c-90493642bc52,d,all of these,pass,pass,pass,agree,verified,render stroke ratio 1.48
+6,8,14,4e8209d5-0196-57af-96e5-334647a4d13a,990b4d89-7946-50a6-8ee3-928525252b36,d,"their courses are cut into older, harder rocks",pass,pass,pass,agree,verified,render stroke ratio 1.51
+6,9,14,57030f86-9990-552c-8b6e-ddcc9a567b93,6a9684be-1edd-5ed2-845d-b6d2c266383f,c,F,pass,pass,pass,agree,verified,render stroke ratio 1.60
+6,10,14,bc7f6cf3-6a29-5e45-b09f-0d7912a4f734,6a3fa962-ed40-5fd4-8ba6-b030bc44faaa,d,all of these,pass,pass,pass,agree,verified,render stroke ratio 1.57
+7,1,15,d7aa850a-c45a-5d79-8d24-b54c79494a32,213fb854-34e7-5bb1-920b-b3624eae8928,b,Arid soils,pass,pass,pass,agree,verified,render stroke ratio 1.39
+7,2,15,3d586503-d546-5d1b-b376-8155f0ed252e,edafe4b8-d8c1-5ec5-ae08-3219ef9df0da,b,physical weathering,pass,pass,pass,agree,verified,render stroke ratio 1.39
+7,3,15,09800f38-baac-5bab-954a-af85e5fd6aa3,51127755-d9d0-507e-940e-5cc965023a5b,b,alluvial soil,pass,pass,pass,agree,verified,render stroke ratio 1.34
+7,4,15,f7b36616-66a4-5cbd-be47-df7fd592a3fd,ea2f5595-668c-52fe-a34d-6c41149b27f1,a,alpha (α) biodiversity,pass,pass,pass,agree,verified,render stroke ratio 1.47
+7,5,15,cacce183-4c7c-563b-b325-11f911bfa6e5,37c39615-c163-56ba-9ea0-4d414733b3c5,d,catastrophic climax,pass,pass,pass,agree,verified,render stroke ratio 1.53
+7,6,16,e3b29b6c-9bcf-510e-be93-e2ef3c4dc5aa,18c88aa6-6955-5dc0-a515-f6331fcc063a,b,intermediate,pass,pass,pass,agree,verified,render stroke ratio 1.33
+7,7,16,68e551b8-2aae-53a0-96c6-4b9610d0b985,bd8b5d8f-72e5-51f6-894b-fbd332c4bee1,c,gamma (γ) biodiversity,pass,pass,pass,agree,verified,render stroke ratio 1.49
+7,8,16,b7afa66d-8322-5f63-8c3d-0a1435b188da,232901b2-7e1a-54f8-8adc-f518a8b0f009,c,soil profile,pass,pass,pass,agree,verified,render stroke ratio 1.41
+7,9,16,a431ccf7-d85a-5c07-b358-07f47e3e9e8b,213dca78-7cf2-5afd-9ea7-71c4de29262e,a,chemical weathering,pass,pass,pass,agree,verified,render stroke ratio 1.42
+7,10,16,c2f54c1c-199c-57d8-b502-71dd4aebccf2,c8f7d4b2-4b66-5774-803a-7a0c85fd4fa7,d,Soil structure,pass,pass,pass,agree,verified,render stroke ratio 1.44
+8,1,17,a2c34171-34ae-5a13-af72-aaa17b1acc71,e68528e5-9bda-5cef-8f4b-23cde63decce,c,Seed bank,pass,pass,pass,agree,verified,render stroke ratio 1.46
+8,2,17,7673d9dc-7caa-5d47-9cb7-9c1a18def058,c4f8fa22-5988-5830-9ec0-4314d4e3921b,c,Inbreeding depression,pass,pass,pass,agree,verified,render stroke ratio 1.39
+8,3,17,32fe67bd-639c-509d-927c-39de8869187f,cbef1e3d-58af-5063-b256-d0489e6851bf,d,Keystone species,pass,pass,pass,agree,verified,render stroke ratio 1.44
+8,4,17,3f4ed616-10bb-5e8c-aba0-f0505e6ba43f,a6dc4e69-e813-57e5-8eb5-8136c6a93b5c,b,limited geographical range,pass,pass,pass,agree,verified,render stroke ratio 1.42
+8,5,17,1da29c23-3c5c-54b9-ba39-1ab30b223e5c,d1d06a68-fe75-55b3-ad97-ad87767094e7,b,Captive-bred individuals may find reintroduction difficult,pass,pass,pass,agree,verified,render stroke ratio 1.39
+8,6,18,16ecf3d2-31aa-52c7-9b76-921de27013b8,f777c486-7560-5ea6-bcc2-596f398306cd,b,Species richness,pass,pass,pass,agree,verified,render stroke ratio 1.48
+8,7,18,80d5c2aa-3843-5e9d-973d-f51c7392e6a5,cf6011e7-a6af-5b18-ae6e-74e6453bada0,c,biomagnification,pass,pass,pass,agree,verified,render stroke ratio 1.40
+8,8,18,9d07865c-c7b8-5335-bc38-4021f48064f8,43a73c0e-d682-57e4-a76d-2a7940132bbd,b,medium,pass,pass,pass,agree,verified,render stroke ratio 1.41
+8,9,18,e8c75471-083c-54e5-8948-7f70d363a7be,512d5fd8-405b-57ff-b014-d0c90b2a175b,c,pollination,pass,pass,pass,agree,verified,render stroke ratio 1.34
+8,10,18,0c244da0-229e-51af-89bb-415731397761,dda937f9-6d18-5011-8a21-f3f08fde0d87,d,all of the above,pass,pass,pass,agree,verified,render stroke ratio 1.45
+9,1,19,2cfdde5f-cf4e-5b80-8ae7-5c2d2a3925cf,231472c5-f451-5969-a941-9a1bfb302da1,a,Female population divided by male population multiplied by 1000,pass,pass,pass,agree,verified,render stroke ratio 1.53
+9,2,19,4e1356e9-c58e-53b3-b3fc-91c550412dea,09c273b7-189e-5107-b559-a0deace0ff16,b,possibilism,pass,pass,pass,agree,verified,render stroke ratio 1.40
+9,3,19,0bbbb10c-4331-50e3-bf3d-a94bfa1ace42,f8f8a9d3-7807-5db6-97ce-7bc592d5836f,b,working-age population,pass,pass,pass,agree,verified,render stroke ratio 1.48
+9,4,19,a6782732-4dc3-59e0-b858-1b0615b221cd,dddc4283-0dcf-574b-8d9e-47cf729db58a,c,S-shaped,pass,pass,pass,agree,verified,render stroke ratio 1.50
+9,5,19,fe597ed5-1d92-596b-9c71-cda1ee30cfb5,d3340e02-d5ba-5bef-b59c-44ee2d62ba89,b,war,pass,pass,pass,agree,verified,render stroke ratio 1.30
+9,6,20,9cae72fb-bf7a-51ca-aeec-4ad7ff46fb89,0ec23876-d79a-56a9-90c0-ee5d8c3062e5,c,GDP per capita,pass,pass,pass,agree,verified,render stroke ratio 1.51
+9,7,20,c594b486-0ac7-5954-8d1b-ce55a709ab12,70f991b9-1b62-52ce-997c-7bf039855e67,c,trans-boundary sustainability,pass,pass,pass,agree,verified,render stroke ratio 1.50
+9,8,20,54833c08-c486-5804-8c3a-b71956d3c3b2,ef833a2e-10b1-5686-95e1-810a3c736662,c,"high birth rate, high death rate to low birth rate, low death rate",pass,pass,pass,agree,verified,render stroke ratio 1.49
+9,9,20,0cbc9cfb-157d-5238-a063-1ce5e7e62ca0,c6087a41-8032-5849-bb5c-667a42f3b3d4,a,foresight,pass,pass,pass,agree,verified,render stroke ratio 1.53
+9,10,20,84b653b1-e254-5d27-8fab-35543688e12f,10db08a8-7837-5e1a-9c85-40186d430ebe,b,15-64 years,pass,pass,pass,agree,verified,render stroke ratio 1.52
+10,1,21,ddda8ae9-e436-519b-b251-9269d1cf0f30,eaa03647-a81b-5027-b17f-47bd70bebc66,c,soil organic matter,pass,pass,pass,agree,verified,render stroke ratio 1.42
+10,2,21,56c867ce-ff29-57a5-9a25-6a6a6ff646a0,44874bdd-ed2d-5d7d-a71d-194b61277415,d,stock resources,pass,pass,pass,agree,verified,render stroke ratio 1.41
+10,3,21,206e1595-81f9-511c-8d67-0a69aec50db5,c9fc0397-e72f-5a5c-801d-4bce2f569557,b,allowing easier human access into forest areas,pass,pass,pass,agree,verified,render stroke ratio 1.52
+10,4,21,86d9df47-ac2f-5727-a286-4d6c7b716ab9,dedcddce-eb69-5763-be75-865386726138,a,potential resources,pass,pass,pass,agree,verified,render stroke ratio 1.40
+10,5,21,d70232ed-7aaa-5bf7-8e02-fe9bd0cf3bd0,05eccb6f-e49e-5aaf-8285-dad4aa29d6ba,a,global calorie supply,pass,pass,pass,agree,verified,render stroke ratio 1.46; spans pages 21-22
+10,6,22,5389127f-8f1f-55c3-8b50-ec76b090fd7e,cee68e60-11b1-5830-bf3f-8d6c7f9294ff,c,reserve resources,pass,pass,pass,agree,verified,render stroke ratio 1.46
+10,7,22,d5624793-c44e-57a0-953e-caeb4a0bdb11,c089ee36-f6ad-57c1-817f-0a17b84166e0,d,stock resources,pass,pass,pass,agree,verified,render stroke ratio 1.41
+10,8,22,2152aa5e-453c-5b2e-883c-2a5e0cd0c3e8,cb91395a-25aa-5ef3-ba10-e7d135b65467,b,mobile sources,pass,pass,pass,agree,verified,render stroke ratio 1.43
+10,9,22,8a852d8d-12c7-5739-b69a-58d808d993e9,ee12a1e9-8475-5466-af84-20ac780deb57,b,actual resources,pass,pass,pass,agree,verified,render stroke ratio 1.41
+10,10,22,c1ec70cd-6cda-5103-b0ce-638866e1103e,8b9f224c-d0d5-5e5e-8ddb-ebd93b0fc07b,a,animal manure,pass,pass,pass,agree,verified,render stroke ratio 1.44
+11,1,23,aa9d7333-6369-5e6b-9760-49492c0ebbc3,d7e2fdbc-f61a-5c5a-8058-98ccc745fc6e,b,absolute advantage,pass,pass,pass,agree,verified,render stroke ratio 1.45
+11,2,23,c1b1a32f-bc82-571a-aafe-04b6862cffb0,31e4bef8-8d5a-5a24-980a-091c3c360ba2,d,all of these,pass,pass,pass,agree,verified,render stroke ratio 1.50
+11,3,23,524b2d37-81ff-577c-aeb6-368802080afb,bb25ffa1-a207-5b48-b49e-556464c6e7bf,b,Railways,pass,pass,pass,agree,verified,render stroke ratio 1.37
+11,4,23,310c3ed4-c66c-5210-bf55-f140db3fc996,c9d67c46-8518-5666-b4b2-32cb2d041e74,d,all of these,pass,pass,pass,agree,verified,render stroke ratio 1.38
+11,5,23,6d3ebe17-9e4f-568c-a6c0-84e394c751ff,bf4c9e59-7d56-54fe-8b59-22ee078fe61c,d,all of these,pass,pass,pass,agree,verified,render stroke ratio 1.50
+11,6,24,2c04ce84-31d9-55fb-bbe2-41e2305ac2da,73d24fa7-2666-5512-955f-816960f9fc48,c,comparative advantage,pass,pass,pass,agree,verified,render stroke ratio 1.46
+11,7,24,6732f6b5-b1e9-5afd-a129-f03d3c719aa6,0a66b519-a1d1-5d39-90e9-e88a09899716,c,Nuclei for condensation,pass,pass,pass,agree,verified,render stroke ratio 1.42
+11,8,24,cca7cd6c-e390-5d09-876e-ebdf2f5b6b62,faf8e1ec-7935-52e8-91ef-f43dc00785e2,d,They cause light pollution through headlamps,pass,pass,pass,agree,verified,render stroke ratio 1.41
+11,9,24,4ff30c94-4efd-501c-a416-3ef5c12ac577,aa00c984-83b7-5241-be9c-47905f7d1f6e,b,To reduce conflict and avoid inbreeding,pass,pass,pass,agree,verified,render stroke ratio 1.43
+11,10,24,02343a03-10dc-5c30-8b0e-3d19261cf696,ee5c41ee-cc30-5b01-9bba-82a5b36e589a,c,educational town,pass,pass,pass,agree,verified,render stroke ratio 1.52
+12,1,25,90ae30de-e5ad-526f-93ca-34a13ca621d0,3bb60dbf-f86f-5de7-a264-a27e8113f8df,c,vulnerability,pass,pass,pass,agree,verified,render stroke ratio 1.26
+12,2,25,a8f1775b-b329-54b6-8661-c781c4d36009,f65dd31f-a38b-5e1c-8123-017239e5af96,c,1500 m,pass,pass,pass,agree,verified,render stroke ratio 1.52
+12,3,25,cbc0f89e-5a41-5fe7-8539-b863f9af8cba,da41a412-7427-56aa-aad3-1c1f336eeda7,c,Interpretive application,pass,pass,pass,agree,verified,render stroke ratio 1.51
+12,4,25,db9b72f4-a584-5463-bf77-40796d93bb61,9ef51f6e-8d74-5f12-8fef-39147a033344,a,hazard,pass,pass,pass,agree,verified,render stroke ratio 1.41
+12,5,25,0410bba1-0792-5e90-8f4d-4acd1c09268b,7bc9f83a-4c0e-5a1e-aa80-22fd652d4dc3,d,Inertial measurement unit,pass,pass,pass,agree,verified,render stroke ratio 1.54; spans pages 25-26
+12,6,26,cd561e49-2a05-503a-806a-f97dcf5de9aa,210cdb34-2b0d-5a9c-9587-351d3bc6de83,b,Metric application,pass,pass,pass,agree,verified,render stroke ratio 1.42
+12,7,26,ac3ba671-1530-58a6-ba23-357053ae3d15,9ba1c82e-5977-546b-8d6f-567894042fa8,b,Humanware,pass,pass,pass,agree,verified,render stroke ratio 1.41
+12,8,26,1567e1dd-798f-51c2-b166-7d6f2da5e839,f1b5c692-ea88-5408-963a-3df394f6a1ff,a,market price method,pass,pass,pass,agree,verified,render stroke ratio 1.44
+12,9,26,4d36503e-73e8-5122-9f0a-0799c6edb76a,691da285-9e6f-548f-9997-47f125d406c1,c,Oblique,pass,pass,pass,agree,verified,render stroke ratio 1.44
+12,10,26,eb4ccaf3-cc3e-5852-b138-eb0ede7ec972,c373d729-3049-51bb-80a1-56f6007c2c5d,c,Ground-borne platform,pass,pass,pass,agree,verified,render stroke ratio 1.45
