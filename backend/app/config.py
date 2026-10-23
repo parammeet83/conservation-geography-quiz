@@ -3,6 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -23,6 +24,19 @@ class Settings(BaseSettings):
     seed_file: Path = REPO_ROOT / "data" / "seed" / "questions.json"
     audit_file: Path = REPO_ROOT / "data" / "seed" / "answer_key_audit.csv"
     log_level: str = "INFO"
+
+    @field_validator("database_url", "test_database_url")
+    @classmethod
+    def use_psycopg_driver(cls, url: str | None) -> str | None:
+        # Hosted providers (e.g. Neon) hand out plain "postgresql://" or "postgres://" URLs;
+        # SQLAlchemy needs the driver named explicitly to use psycopg 3.
+        if url is None:
+            return None
+        url = url.strip()
+        for prefix in ("postgres://", "postgresql://"):
+            if url.startswith(prefix):
+                return "postgresql+psycopg://" + url[len(prefix) :]
+        return url
 
     @property
     def cors_origin_list(self) -> list[str]:

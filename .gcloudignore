@@ -1,0 +1,20 @@
+# Files NOT uploaded to Cloud Build when deploying the backend image.
+# Only backend/ code and data/seed/ are needed (see Dockerfile).
+.git/
+.github/
+.gitignore
+.gcloudignore
+.env
+.env.*
+.local/
+*.pdf
+frontend/
+docs/
+scripts/
+*.md
+!data/seed/*.md
+backend/.venv/
+backend/tests/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/

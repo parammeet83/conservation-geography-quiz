@@ -3,6 +3,7 @@
 validate   Validate data/seed/questions.json and answer_key_audit.csv (no database needed).
 seed       Validate, then idempotently load the question bank into the database.
 check-db   Run the question-bank integrity checks against the database.
+release    Apply Alembic migrations, then seed, then check-db (used by the deployment job).
 
 Each command exits non-zero on any failure.
 """
@@ -69,13 +70,29 @@ def cmd_check_db() -> int:
     return 0
 
 
+def cmd_release() -> int:
+    from pathlib import Path
+
+    from alembic import command
+    from alembic.config import Config
+
+    print("Applying migrations...")
+    command.upgrade(Config(str(Path(__file__).resolve().parents[1] / "alembic.ini")), "head")
+    return cmd_seed() or cmd_check_db()
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m app.cli", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("command", choices=["validate", "seed", "check-db"])
+    parser.add_argument("command", choices=["validate", "seed", "check-db", "release"])
     args = parser.parse_args(argv)
-    return {"validate": cmd_validate, "seed": cmd_seed, "check-db": cmd_check_db}[args.command]()
+    return {
+        "validate": cmd_validate,
+        "seed": cmd_seed,
+        "check-db": cmd_check_db,
+        "release": cmd_release,
+    }[args.command]()
 
 
 if __name__ == "__main__":
