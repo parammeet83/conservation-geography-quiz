@@ -51,6 +51,8 @@ class Health(BaseModel):
 class CreateAttemptRequest(StrictModel):
     mode: Mode
     week_no: int | None = None
+    # Study Mode: correctness of each answer is revealed immediately and the question locks.
+    study_mode: bool = False
 
     @model_validator(mode="after")
     def check_week(self) -> "CreateAttemptRequest":
@@ -68,12 +70,20 @@ class DisplayedOption(BaseModel):
     text: str
 
 
+class StudyFeedback(BaseModel):
+    """Revealed only in Study Mode, and only for a question that has already been answered."""
+
+    is_correct: bool
+    correct_option_id: uuid.UUID
+
+
 class ActiveQuestion(BaseModel):
     attempt_question_id: uuid.UUID
     position: int
     question_text: str
     options: list[DisplayedOption]
     selected_option_id: uuid.UUID | None
+    feedback: StudyFeedback | None = None
 
 
 class AttemptOut(BaseModel):
@@ -81,6 +91,7 @@ class AttemptOut(BaseModel):
     mode: Mode
     week_no: int | None
     title: str
+    study_mode: bool
     status: AttemptStatus
     started_at: datetime
     submitted_at: datetime | None
@@ -103,6 +114,20 @@ class AnswerSaved(BaseModel):
     answered_count: int
     total_questions: int
     answered_at: datetime | None
+
+
+class StudyAnswerRequest(StrictModel):
+    selected_option_id: uuid.UUID
+
+
+class StudyAnswerChecked(BaseModel):
+    attempt_question_id: uuid.UUID
+    selected_option_id: uuid.UUID
+    is_correct: bool
+    correct_option_id: uuid.UUID
+    answered_count: int
+    correct_count: int
+    total_questions: int
 
 
 # ---- Results (only after submission) --------------------------------------
@@ -135,6 +160,7 @@ class AttemptResult(BaseModel):
     mode: Mode
     week_no: int | None
     title: str
+    study_mode: bool
     status: Literal["submitted"]
     started_at: datetime
     submitted_at: datetime

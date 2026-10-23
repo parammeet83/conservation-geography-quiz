@@ -88,6 +88,7 @@ def create_attempt(session: Session, req: schemas.CreateAttemptRequest, rng: Ran
         access_token_hash=hash_token(token),
         mode=req.mode,
         week_no=req.week_no,
+        study_mode=req.study_mode,
         status="in_progress",
         total_questions=len(questions),
     )
@@ -101,7 +102,9 @@ def create_attempt(session: Session, req: schemas.CreateAttemptRequest, rng: Ran
         attempt.questions.append(aq)
     session.add(attempt)
     session.commit()
-    logger.info("attempt created id=%s mode=%s week=%s", attempt.id, attempt.mode, attempt.week_no)
+    logger.info(
+        "attempt created id=%s mode=%s week=%s study=%s", attempt.id, attempt.mode, attempt.week_no, attempt.study_mode
+    )
     return attempt, token
 
 
@@ -146,6 +149,21 @@ def load_full_attempt(session: Session, attempt_id: uuid.UUID) -> QuizAttempt:
 # ---- Serialisation -------------------------------------------------------------
 
 
+def _correct_option_id(aq: AttemptQuestion) -> uuid.UUID:
+    correct_ids = [o.id for o in aq.question.options if o.is_correct]
+    if len(correct_ids) != 1:
+        raise ApiError(503, "question_bank_invalid", "A question in this attempt has no single correct option.")
+    return correct_ids[0]
+
+
+def _study_feedback(attempt: QuizAttempt, aq: AttemptQuestion) -> schemas.StudyFeedback | None:
+    """Correctness for an already-answered Study Mode question; never for Quiz Mode or unanswered questions."""
+    if not attempt.study_mode or aq.selected_option_id is None:
+        return None
+    correct_id = _correct_option_id(aq)
+    return schemas.StudyFeedback(is_correct=aq.selected_option_id == correct_id, correct_option_id=correct_id)
+
+
 def to_active(attempt: QuizAttempt) -> schemas.AttemptOut:
     questions = [
         schemas.ActiveQuestion(
@@ -153,6 +171,7 @@ def to_active(attempt: QuizAttempt) -> schemas.AttemptOut:
             position=aq.display_order,
             question_text=aq.question.question_text,
             selected_option_id=aq.selected_option_id,
+            feedback=_study_feedback(attempt, aq),
             options=[
                 schemas.DisplayedOption(
                     id=aqo.option_id, label=LABELS[aqo.display_order - 1], text=aqo.option.option_text
@@ -167,6 +186,7 @@ def to_active(attempt: QuizAttempt) -> schemas.AttemptOut:
         mode=attempt.mode,
         week_no=attempt.week_no,
         title=quiz_title(attempt.mode, attempt.week_no),
+        study_mode=attempt.study_mode,
         status=attempt.status,
         started_at=attempt.started_at,
         submitted_at=attempt.submitted_at,
@@ -221,6 +241,7 @@ def to_result(attempt: QuizAttempt) -> schemas.AttemptResult:
         mode=attempt.mode,
         week_no=attempt.week_no,
         title=quiz_title(attempt.mode, attempt.week_no),
+        study_mode=attempt.study_mode,
         status="submitted",
         started_at=attempt.started_at,
         submitted_at=attempt.submitted_at,
@@ -248,6 +269,9 @@ def save_answer(
     attempt = authorize(session, attempt_id, token, lock=True)
     if attempt.status != "in_progress":
         raise ApiError(409, "attempt_not_in_progress", "This attempt has been submitted and can no longer be changed.")
+    if attempt.study_mode:
+        # Study Mode answers are locked once checked; they are recorded only via check_study_answer.
+        raise ApiError(409, "study_mode_attempt", "Study Mode answers are checked with the study-answer endpoint.")
     aq = session.scalars(
         select(AttemptQuestion)
         .where(AttemptQuestion.id == attempt_question_id, AttemptQuestion.attempt_id == attempt.id)
@@ -273,6 +297,62 @@ def save_answer(
         answered_count=answered or 0,
         total_questions=attempt.total_questions,
         answered_at=aq.answered_at,
+    )
+
+
+def check_study_answer(
+    session: Session,
+    attempt_id: uuid.UUID,
+    token: str | None,
+    attempt_question_id: uuid.UUID,
+    option_id: uuid.UUID,
+) -> schemas.StudyAnswerChecked:
+    """Record the first answer to a Study Mode question and reveal whether it was correct.
+
+    The question locks after its first answer. Re-sending the same option returns the same
+    result (safe network retries); choosing a different option is rejected.
+    """
+    attempt = authorize(session, attempt_id, token, lock=True)
+    if not attempt.study_mode:
+        raise ApiError(409, "not_study_mode", "Answers are revealed only in Study Mode attempts.")
+    if attempt.status != "in_progress":
+        raise ApiError(409, "attempt_not_in_progress", "This attempt has been submitted and can no longer be changed.")
+    aq = session.scalars(
+        select(AttemptQuestion)
+        .where(AttemptQuestion.id == attempt_question_id, AttemptQuestion.attempt_id == attempt.id)
+        .options(
+            selectinload(AttemptQuestion.option_order),
+            selectinload(AttemptQuestion.question).selectinload(Question.options),
+        )
+    ).first()
+    if aq is None:
+        raise ApiError(404, "question_not_in_attempt", "This question is not part of the attempt.")
+    if option_id not in {aqo.option_id for aqo in aq.option_order}:
+        raise ApiError(422, "option_not_in_question", "The selected option does not belong to this question.")
+    if aq.selected_option_id is not None and aq.selected_option_id != option_id:
+        raise ApiError(409, "question_locked", "This question has already been answered in Study Mode.")
+
+    correct_id = _correct_option_id(aq)
+    if aq.selected_option_id is None:
+        aq.selected_option_id = option_id
+        aq.answered_at = datetime.now(UTC)
+        aq.is_correct = option_id == correct_id
+        session.flush()
+    answered, correct = session.execute(
+        select(
+            func.count(AttemptQuestion.selected_option_id),
+            func.count().filter(AttemptQuestion.is_correct.is_(True)),
+        ).where(AttemptQuestion.attempt_id == attempt.id)
+    ).one()
+    session.commit()
+    return schemas.StudyAnswerChecked(
+        attempt_question_id=aq.id,
+        selected_option_id=option_id,
+        is_correct=option_id == correct_id,
+        correct_option_id=correct_id,
+        answered_count=answered,
+        correct_count=correct,
+        total_questions=attempt.total_questions,
     )
 
 

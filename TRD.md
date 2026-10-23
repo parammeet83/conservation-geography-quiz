@@ -287,6 +287,14 @@ Request:
 
 The backend verifies that the attempt is in progress and the selected option belongs to that question. `null` clears an answer. Return saved answer state and current answered count, but no correctness flag.
 
+### `POST /attempts/{attempt_id}/questions/{attempt_question_id}/study-answer` (Study Mode)
+
+Request: `{ "selected_option_id": "uuid" }` (required; `null` is rejected).
+
+Allowed only for attempts created with `"study_mode": true` (otherwise `409 not_study_mode`, nothing recorded) and only while the attempt is in progress. The server locks the attempt row, validates that the option belongs to the question (`422 option_not_in_question`), records the **first** answer, and returns `is_correct`, `correct_option_id`, `answered_count`, `correct_count` and `total_questions`. The question is then locked: a different option returns `409 question_locked`; re-sending the same option returns the same result (safe retry). For Study Mode attempts the Quiz Mode `PUT …/answer` endpoint returns `409 study_mode_attempt`, so a locked answer cannot be changed or cleared.
+
+`POST /attempts` accepts an optional `"study_mode": true`. Active-attempt responses include `study_mode` and, per question, `feedback` (`{is_correct, correct_option_id}`), which is `null` for every Quiz Mode question and for every unanswered Study Mode question. Study sessions finish through the normal submit endpoint; grading is unchanged.
+
 ### `POST /attempts/{attempt_id}/submit`
 
 The server performs grading and status transition in one transaction (the attempt row is locked with `SELECT ... FOR UPDATE`, which also serialises it against answer saves). It rejects any request body with `422 unexpected_fields`, so client-supplied scores are never accepted. If already submitted, return the existing result. The response includes the score and full review with correct answer text.

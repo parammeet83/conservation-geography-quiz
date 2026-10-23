@@ -229,8 +229,18 @@ def test_active_attempt_payloads_never_expose_correctness(client):
     for payload in (attempt, saved, resumed):
         assert not (_keys(payload) & FORBIDDEN_KEYS)
         assert "correct" not in json.dumps(payload).lower().replace("incorrect", "")
-    allowed_question_keys = {"attempt_question_id", "position", "question_text", "options", "selected_option_id"}
+    allowed_question_keys = {
+        "attempt_question_id",
+        "position",
+        "question_text",
+        "options",
+        "selected_option_id",
+        "feedback",
+    }
     assert all(set(x) == allowed_question_keys for x in resumed["questions"])
+    # Quiz Mode never carries Study Mode feedback, even for answered questions.
+    assert resumed["study_mode"] is False
+    assert all(x["feedback"] is None for x in resumed["questions"])
     assert all(set(o) == {"id", "label", "text"} for x in resumed["questions"] for o in x["options"])
 
 

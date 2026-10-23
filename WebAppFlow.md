@@ -89,6 +89,14 @@ Rules:
 - If the access token is missing/invalid or the attempt no longer exists, show a clear message and a link back to quiz selection. Do not silently create another attempt because that would reset the user's progress unexpectedly.
 - **As built:** the token is kept in `localStorage` (one record per attempt), sent as `Authorization: Bearer`, and never placed in a URL. The attempt URL is `/attempts/{id}` with an optional `?q=N` for the current question. The home page offers **Resume** for an unsubmitted attempt stored in this browser alongside **Start new**. Opening an attempt in another browser shows the recovery message. Risk accepted: anyone using the same browser profile can resume that attempt.
 
+## 6a. Study Mode flow
+
+1. On the home page the learner selects **Study Mode** (Quiz Mode is the default) and starts a week or the Overall Quiz; the frontend sends `POST /api/v1/attempts` with `"study_mode": true`. Question and option shuffling are identical to Quiz Mode.
+2. Selecting an option sends `POST /attempts/{id}/questions/{aqid}/study-answer`. The server records the first answer, locks the question, and returns whether it was correct plus the correct option ID. Nothing about correctness is sent before this.
+3. The UI highlights the correct option (green) and a wrong pick (red), shows the message, and updates the tally. Further clicks on that question do nothing.
+4. Refresh/resume returns the stored order plus `feedback` for answered questions only.
+5. When all questions are answered the completion summary appears; *See full summary* (or *Finish session* at any time) calls the existing submit endpoint and opens the results page.
+
 ## 7. State transitions
 
 ```mermaid

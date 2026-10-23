@@ -22,12 +22,19 @@ export interface DisplayedOption {
   text: string;
 }
 
+/** Study Mode only: present once a question has been answered (and locked). */
+export interface StudyFeedback {
+  is_correct: boolean;
+  correct_option_id: string;
+}
+
 export interface AttemptQuestion {
   attempt_question_id: string;
   position: number;
   question_text: string;
   options: DisplayedOption[];
   selected_option_id: string | null;
+  feedback: StudyFeedback | null;
 }
 
 export interface Attempt {
@@ -35,6 +42,7 @@ export interface Attempt {
   mode: QuizMode;
   week_no: number | null;
   title: string;
+  study_mode: boolean;
   status: AttemptStatus;
   started_at: string;
   submitted_at: string | null;
@@ -53,6 +61,16 @@ export interface AnswerSaved {
   answered_count: number;
   total_questions: number;
   answered_at: string | null;
+}
+
+export interface StudyAnswerChecked {
+  attempt_question_id: string;
+  selected_option_id: string;
+  is_correct: boolean;
+  correct_option_id: string;
+  answered_count: number;
+  correct_count: number;
+  total_questions: number;
 }
 
 export type ReviewStatus = "correct" | "incorrect" | "unanswered";
@@ -84,6 +102,7 @@ export interface AttemptResult {
   mode: QuizMode;
   week_no: number | null;
   title: string;
+  study_mode: boolean;
   status: "submitted";
   started_at: string;
   submitted_at: string;

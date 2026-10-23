@@ -44,6 +44,7 @@ Authentication, public leaderboards, teacher dashboards, and multi-course suppor
 11. Show correct answer and the user's selected answer after submission, including unanswered questions.
 12. Responsive desktop, tablet, and mobile layouts.
 13. Seed/import validation and automated tests for counts, answer integrity, and shuffle behavior.
+14. **Study Mode (added 2026-10-23):** a mode selector on the home page (Quiz Mode default). In Study Mode the learner sees immediately after each choice whether it was correct, with the correct option highlighted; each question locks after its first answer; a running correct/incorrect tally and a completion summary are shown, followed by the normal results and review. Works for every weekly quiz and the Overall Quiz with the same shuffling. The source has no explanations, so none are shown.
 
 ### Out of scope for MVP
 

@@ -21,6 +21,7 @@ interface AttemptState {
   token: string;
   mode: "weekly" | "overall";
   week_no: number | null;
+  study_mode: boolean;
   status: "in_progress" | "submitted";
   questions: { aqId: string; q: Q; order: Opt[]; selected: string | null }[];
   submitted_at: string | null;
@@ -75,6 +76,7 @@ export class FakeApi {
       mode: a.mode,
       week_no: a.week_no,
       title: a.mode === "weekly" ? `Week ${a.week_no}` : "Overall Quiz",
+      study_mode: a.study_mode,
       status: a.status,
       started_at: "2026-10-22T10:00:00Z",
       submitted_at: a.submitted_at,
@@ -85,6 +87,11 @@ export class FakeApi {
         position: i + 1,
         question_text: x.q.text,
         selected_option_id: x.selected,
+        // Study Mode reveals correctness only for questions that have been answered.
+        feedback:
+          a.study_mode && x.selected
+            ? { is_correct: x.order.find((o) => o.id === x.selected)!.correct, correct_option_id: x.order.find((o) => o.correct)!.id }
+            : null,
         options: x.order.map((o, j) => ({ id: o.id, label: LABELS[j], text: o.text })),
       })),
     };
@@ -121,6 +128,7 @@ export class FakeApi {
       mode: a.mode,
       week_no: a.week_no,
       title: a.mode === "weekly" ? `Week ${a.week_no}` : "Overall Quiz",
+      study_mode: a.study_mode,
       status: "submitted",
       started_at: "2026-10-22T10:00:00Z",
       submitted_at: a.submitted_at,
@@ -174,6 +182,7 @@ export class FakeApi {
         token: `tok-${this.counter}`,
         mode: body.mode,
         week_no: body.mode === "weekly" ? body.week_no : null,
+        study_mode: body.study_mode === true,
         status: "in_progress",
         submitted_at: null,
         questions: rot(qs, this.counter).map((q, i) => ({
@@ -203,6 +212,7 @@ export class FakeApi {
         return Promise.reject(new TypeError("Failed to fetch"));
       }
       if (a.status !== "in_progress") return this.err(409, "attempt_not_in_progress");
+      if (a.study_mode) return this.err(409, "study_mode_attempt");
       const x = a.questions.find((q) => q.aqId === ans[1]);
       if (!x) return this.err(404, "question_not_in_attempt");
       const opt = body.selected_option_id;
@@ -214,6 +224,32 @@ export class FakeApi {
         answered_count: a.questions.filter((q) => q.selected).length,
         total_questions: a.questions.length,
         answered_at: opt ? "2026-10-22T10:01:00Z" : null,
+      });
+    }
+    const study = rest.match(/^\/questions\/([^/]+)\/study-answer$/);
+    if (method === "POST" && study) {
+      if (this.failSaves > 0) {
+        this.failSaves--;
+        return Promise.reject(new TypeError("Failed to fetch"));
+      }
+      if (!a.study_mode) return this.err(409, "not_study_mode");
+      if (a.status !== "in_progress") return this.err(409, "attempt_not_in_progress");
+      const x = a.questions.find((q) => q.aqId === study[1]);
+      if (!x) return this.err(404, "question_not_in_attempt");
+      const opt = body.selected_option_id;
+      if (!x.order.some((o) => o.id === opt)) return this.err(422, "option_not_in_question");
+      if (x.selected && x.selected !== opt) return this.err(409, "question_locked");
+      x.selected = opt;
+      const correct = x.order.find((o) => o.correct)!;
+      const answeredQs = a.questions.filter((q) => q.selected);
+      return this.json(200, {
+        attempt_question_id: x.aqId,
+        selected_option_id: opt,
+        is_correct: opt === correct.id,
+        correct_option_id: correct.id,
+        answered_count: answeredQs.length,
+        correct_count: answeredQs.filter((q) => q.order.find((o) => o.id === q.selected)!.correct).length,
+        total_questions: a.questions.length,
       });
     }
     if (method === "POST" && rest === "/submit") {

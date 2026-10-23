@@ -199,7 +199,7 @@ Interactive API docs are at <http://127.0.0.1:8000/docs>.
 With the database running (step 6) and from the repository root:
 
 ```powershell
-# Backend: lint + format + 88 tests. Rebuilds cgq_test from migrations each run.
+# Backend: lint + format + 104 tests. Rebuilds cgq_test from migrations each run.
 cd backend
 .\.venv\Scripts\python.exe -m ruff check .
 .\.venv\Scripts\python.exe -m ruff format --check .
@@ -207,7 +207,7 @@ cd backend
 .\.venv\Scripts\python.exe -m pytest -q
 cd ..
 
-# Frontend: types, lint, 14 component tests, production build
+# Frontend: types, lint, 26 component tests, production build
 cd frontend
 npm run typecheck
 npm run lint
@@ -223,9 +223,9 @@ cd ..
 **Expected:**
 
 - Ruff: `All checks passed!` and `… files already formatted`. Alembic check: `No new upgrade operations detected.`
-- pytest: `88 passed`. The suite covers seed validation, the TRD cross-check, idempotent seeding, DB constraints, all 12 weekly scopes, overall coverage, deterministic shuffle replay, the correct answer at A/B/C/D, rounding, invalid and cross-question options, duplicate and concurrent submits, immutability, token checks, absence of answer-key leaks, logging without tokens, and CORS.
-- Vitest: `14 passed`. Vite build: `✓ built`.
-- Playwright: `6 passed`. These cover the weekly journey, Week 12 scope, the overall journey with all 120 questions, fresh shuffles, no overflow at 360 px, and keyboard use.
+- pytest: `104 passed` (including 16 Study Mode tests). The suite covers seed validation, the TRD cross-check, idempotent seeding, DB constraints, all 12 weekly scopes, overall coverage, deterministic shuffle replay, the correct answer at A/B/C/D, rounding, invalid and cross-question options, duplicate and concurrent submits, immutability, token checks, absence of answer-key leaks, logging without tokens, and CORS.
+- Vitest: `26 passed` (including 12 Study Mode tests). Vite build: `✓ built`.
+- Playwright: `9 passed`. These cover Study Mode (weekly journey, overall, 360 px),  the weekly journey, Week 12 scope, the overall journey with all 120 questions, fresh shuffles, no overflow at 360 px, and keyboard use.
 
 Playwright reuses the servers from step 9 if they are running; otherwise it starts them.
 
@@ -236,6 +236,13 @@ Playwright reuses the servers from step 9 if they are running; otherwise it star
 3. Use **Next →**, **← Previous**, and the numbered **Go to question** palette. **Expected:** answers stay selected when you return to a question. **Previous** is disabled on question 1 and **Next** on question 10.
 4. Change an answer, and use **Clear selection** on another. **Expected:** both changes are saved, and the counts update.
 5. Repeat with a different week, for example **Week 7**. **Expected:** only that week's ten questions appear.
+
+### 13a. Use Study Mode
+
+1. On the home page, select **Study Mode** in the *Mode* group (Quiz Mode is selected by default), then click **Week 1**. **Expected:** the scope line reads *Week 1 · Study Mode*, a tally shows *0 correct · 0 incorrect*, and no answer is highlighted.
+2. Choose an option. **Expected:** the options lock; the correct option turns green with *✓ Correct answer*; if you chose wrongly your option turns red with *✗ Your answer* and the message reads *Incorrect. The correct answer is …*; otherwise *Correct!*. Clicking another option changes nothing.
+3. Answer all ten. **Expected:** *Study session complete* with your correct/incorrect counts; **See full summary** opens *Study session summary* with the score and the full review. **Try again** starts a new Study Mode attempt.
+4. Repeat with **Overall Quiz** in Study Mode, and check that Quiz Mode still shows no correctness until submission.
 
 ## 14. Complete the overall quiz
 

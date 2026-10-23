@@ -1,4 +1,12 @@
-import type { AnswerSaved, Attempt, AttemptResult, CreatedAttempt, QuizCatalogue, QuizMode } from "./types";
+import type {
+  AnswerSaved,
+  Attempt,
+  AttemptResult,
+  CreatedAttempt,
+  QuizCatalogue,
+  QuizMode,
+  StudyAnswerChecked,
+} from "./types";
 
 const BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "") + "/api/v1";
 
@@ -50,10 +58,13 @@ async function request<T>(path: string, init: RequestInit = {}, token?: string):
 export const api = {
   getCatalogue: () => request<QuizCatalogue>("/quizzes"),
 
-  createAttempt: (mode: QuizMode, weekNo?: number | null) =>
+  createAttempt: (mode: QuizMode, weekNo?: number | null, studyMode = false) =>
     request<CreatedAttempt>("/attempts", {
       method: "POST",
-      body: JSON.stringify(mode === "weekly" ? { mode, week_no: weekNo } : { mode }),
+      body: JSON.stringify({
+        ...(mode === "weekly" ? { mode, week_no: weekNo } : { mode }),
+        ...(studyMode ? { study_mode: true } : {}),
+      }),
     }),
 
   getAttempt: (attemptId: string, token: string) => request<Attempt>(`/attempts/${attemptId}`, {}, token),
@@ -62,6 +73,14 @@ export const api = {
     request<AnswerSaved>(
       `/attempts/${attemptId}/questions/${attemptQuestionId}/answer`,
       { method: "PUT", body: JSON.stringify({ selected_option_id: optionId }) },
+      token,
+    ),
+
+  /** Study Mode: lock in an answer and learn whether it is correct. */
+  checkStudyAnswer: (attemptId: string, attemptQuestionId: string, optionId: string, token: string) =>
+    request<StudyAnswerChecked>(
+      `/attempts/${attemptId}/questions/${attemptQuestionId}/study-answer`,
+      { method: "POST", body: JSON.stringify({ selected_option_id: optionId }) },
       token,
     ),
 

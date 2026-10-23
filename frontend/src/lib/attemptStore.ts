@@ -13,6 +13,8 @@ export interface StoredAttempt {
   mode: QuizMode;
   weekNo: number | null;
   title: string;
+  /** Absent on records saved before Study Mode existed, which were all Quiz Mode. */
+  studyMode?: boolean;
   submitted: boolean;
   createdAt: string;
 }
@@ -55,8 +57,10 @@ export const attemptStore = {
     writeAll(readAll().filter((r) => r.attemptId !== attemptId));
   },
 
-  /** Most recent unsubmitted attempt for a quiz scope, if any. */
-  inProgressFor(mode: QuizMode, weekNo: number | null): StoredAttempt | undefined {
-    return readAll().find((r) => !r.submitted && r.mode === mode && r.weekNo === weekNo);
+  /** Most recent unsubmitted attempt for a quiz scope and study/quiz mode, if any. */
+  inProgressFor(mode: QuizMode, weekNo: number | null, studyMode = false): StoredAttempt | undefined {
+    return readAll().find(
+      (r) => !r.submitted && r.mode === mode && r.weekNo === weekNo && Boolean(r.studyMode) === studyMode,
+    );
   },
 };

@@ -58,7 +58,7 @@ export default function ResultPage() {
     setRestarting(true);
     setRestartError(null);
     try {
-      const id = await startAttempt(result.mode, result.week_no);
+      const id = await startAttempt(result.mode, result.week_no, result.study_mode);
       navigate(`/attempts/${id}`);
     } catch (err) {
       setRestartError(err instanceof Error ? err.message : "Could not start a new attempt.");
@@ -104,8 +104,9 @@ export default function ResultPage() {
     <div className="results">
       <p className="quiz-header__scope">
         {result.title} · {result.mode === "overall" ? "All weeks" : "Weekly quiz"}
+        {result.study_mode ? " · Study Mode" : ""}
       </p>
-      <h1 className="page-title">Your results</h1>
+      <h1 className="page-title">{result.study_mode ? "Study session summary" : "Your results"}</h1>
 
       <section className="score-card" aria-labelledby="score-heading">
         <h2 id="score-heading" className="visually-hidden">

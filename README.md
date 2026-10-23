@@ -15,6 +15,8 @@ Repository: <https://github.com/parammeet83/conservation-geography-quiz>
 - **Security:** each attempt has a random access token. Only its SHA-256 hash is stored, it is sent as an `Authorization: Bearer` header, and it never appears in URLs or logs. Active-attempt responses contain no correctness data.
 - **Accessible, responsive UI:** semantic radio groups, visible focus, a keyboard-operable focus-trapped dialog, state not conveyed by colour alone, and no horizontal scrolling at 360 px.
 
+- **Study Mode:** choose *Study Mode* on the home page (Quiz Mode stays the default) for any week or the Overall Quiz. Each answer is checked by the server as soon as you choose it: the correct option is highlighted green, a wrong pick red, and the question locks after one try. A running tally and a completion summary lead to the usual results and review. The source PDF has no explanations, so none are shown.
+
 Not included (out of scope for this MVP): accounts, timers, negative marking, leaderboards, certificates, and explanations.
 
 ## Technology stack
@@ -24,7 +26,7 @@ Not included (out of scope for this MVP): accounts, timers, negative marking, le
 | Frontend | React 19, TypeScript 6, Vite 8, React Router 7, plain CSS (custom properties, light/dark) |
 | Backend | Python 3.12, FastAPI, Pydantic 2, SQLAlchemy 2.1, Alembic, psycopg 3 |
 | Database | PostgreSQL (tested with 17) |
-| Tests | pytest (88 tests), Vitest + React Testing Library (14), Playwright (6 end-to-end) |
+| Tests | pytest (104 tests), Vitest + React Testing Library (26), Playwright (9 end-to-end) |
 | Tooling | Ruff, ESLint, GitHub Actions CI |
 | Data prep | PyMuPDF (maintainer-only PDF extraction script) |
 
@@ -157,6 +159,7 @@ powershell -ExecutionPolicy Bypass -File scripts\start-frontend.ps1   # http://l
 | `POST /attempts` | `{"mode":"weekly","week_no":N}` or `{"mode":"overall"}` returns a shuffled attempt and an `access_token` (once) |
 | `GET /attempts/{id}` | The stored attempt, with its order and selections. No correctness data. |
 | `PUT /attempts/{id}/questions/{attempt_question_id}/answer` | `{"selected_option_id": uuid \| null}` saves or clears an answer |
+| `POST /attempts/{id}/questions/{attempt_question_id}/study-answer` | Study Mode only: `{"selected_option_id": uuid}` locks the answer and returns `is_correct` and `correct_option_id` |
 | `POST /attempts/{id}/submit` | Grade and lock the attempt (idempotent). Returns the result and review. |
 | `GET /attempts/{id}/result` | Result and review. Returns 409 before submission. |
 
@@ -165,13 +168,13 @@ Every attempt route requires `Authorization: Bearer <access_token>`. Errors use 
 ## Testing
 
 ```powershell
-# Backend: lint, format, 88 tests (needs TEST_DATABASE_URL; tests rebuild that DB via migrations)
+# Backend: lint, format, 104 tests (needs TEST_DATABASE_URL; tests rebuild that DB via migrations)
 cd backend
 .\.venv\Scripts\python.exe -m ruff check .
 .\.venv\Scripts\python.exe -m ruff format --check .
 .\.venv\Scripts\python.exe -m pytest -q
 
-# Frontend: type check, lint, 14 component tests, production build
+# Frontend: type check, lint, 26 component tests, production build
 cd ..\frontend
 npm run typecheck
 npm run lint

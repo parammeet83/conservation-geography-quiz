@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ApiError, api } from "../api/client";
-import type { Attempt } from "../api/types";
+import type { Attempt, StudyFeedback } from "../api/types";
 import ConfirmDialog from "../components/ConfirmDialog";
 import QuestionPalette from "../components/QuestionPalette";
 import { attemptStore } from "../lib/attemptStore";
@@ -26,6 +26,8 @@ export default function QuizPage() {
   const [selections, setSelections] = useState<Record<string, string | null>>({});
   const [saveStatus, setSaveStatus] = useState<Record<string, SaveStatus>>({});
   const [saveErrors, setSaveErrors] = useState<Record<string, string>>({});
+  // Study Mode: server-revealed correctness for answered (locked) questions.
+  const [feedback, setFeedback] = useState<Record<string, StudyFeedback>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -56,6 +58,11 @@ export default function QuizPage() {
       }
       setAttempt(data);
       setSelections(Object.fromEntries(data.questions.map((q) => [q.attempt_question_id, q.selected_option_id])));
+      setFeedback(
+        Object.fromEntries(
+          data.questions.flatMap((q) => (q.feedback ? [[q.attempt_question_id, q.feedback] as const] : [])),
+        ),
+      );
       setSaveStatus({});
       setPhase({ kind: "ready" });
     } catch (err) {
@@ -119,13 +126,59 @@ export default function QuizPage() {
     [attemptId, token, navigate],
   );
 
+  // Study Mode: the first selection is sent once, locked, and answered with its correctness.
+  const checkStudy = useCallback(
+    async (aqId: string, optionId: string) => {
+      if (!token) return;
+      setSaveStatus((s) => ({ ...s, [aqId]: "saving" }));
+      try {
+        const res = await api.checkStudyAnswer(attemptId, aqId, optionId, token);
+        setFeedback((f) => ({ ...f, [aqId]: { is_correct: res.is_correct, correct_option_id: res.correct_option_id } }));
+        setSaveStatus((s) => ({ ...s, [aqId]: "saved" }));
+      } catch (err) {
+        if (err instanceof ApiError && err.code === "attempt_not_in_progress") {
+          attemptStore.markSubmitted(attemptId);
+          navigate(`/attempts/${attemptId}/result`, { replace: true });
+          return;
+        }
+        if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+          setPhase({ kind: "access_error" });
+          return;
+        }
+        if (err instanceof ApiError && err.code === "question_locked") {
+          // The server already holds an answer for this question (e.g. from another tab): show it.
+          void load();
+          return;
+        }
+        setSaveStatus((s) => ({ ...s, [aqId]: "error" }));
+        setSaveErrors((m) => ({ ...m, [aqId]: err instanceof Error ? err.message : "Check failed." }));
+      }
+    },
+    [attemptId, token, navigate, load],
+  );
+
+  const study = attempt?.study_mode ?? false;
+
   function select(aqId: string, optionId: string | null) {
+    if (study) {
+      if (selections[aqId] != null || optionId == null) return; // locked after the first selection
+      setSelections((s) => ({ ...s, [aqId]: optionId }));
+      void checkStudy(aqId, optionId);
+      return;
+    }
     setSelections((s) => ({ ...s, [aqId]: optionId }));
     void persist(aqId, optionId);
   }
 
+  function retry(aqId: string) {
+    const optionId = selections[aqId] ?? null;
+    if (study) {
+      if (optionId) void checkStudy(aqId, optionId);
+    } else void persist(aqId, optionId);
+  }
+
   function retryFailed() {
-    for (const id of failedIds) void persist(id, selections[id] ?? null);
+    for (const id of failedIds) retry(id);
   }
 
   // ---- navigation ---------------------------------------------------------------------------
@@ -199,6 +252,12 @@ export default function QuizPage() {
   const selected = selections[question.attempt_question_id] ?? null;
   const currentStatus = saveStatus[question.attempt_question_id];
   const progressPct = Math.round((answered / total) * 100);
+  const fb = study ? feedback[question.attempt_question_id] : undefined;
+  const locked = study && selected != null;
+  const studyCorrect = Object.values(feedback).filter((f) => f.is_correct).length;
+  const studyIncorrect = Object.keys(feedback).length - studyCorrect;
+  const studyComplete = study && Object.keys(feedback).length === total;
+  const correctOption = fb ? question.options.find((o) => o.id === fb.correct_option_id) : undefined;
 
   return (
     <div className="quiz">
@@ -206,6 +265,7 @@ export default function QuizPage() {
         <p className="quiz-header__scope">
           {attempt.title}
           <span className="quiz-header__mode">{attempt.mode === "overall" ? " · All weeks" : ""}</span>
+          {study && <span className="quiz-header__mode"> · Study Mode</span>}
         </p>
         <h1 className="quiz-header__position" ref={headingRef} tabIndex={-1}>
           Question {currentIndex + 1} of {total}
@@ -225,6 +285,13 @@ export default function QuizPage() {
           <p className="progress__text" data-testid="progress-text">
             {answered} answered · {unanswered} remaining
           </p>
+          {study && (
+            <p className="progress__text study-tally" data-testid="study-tally">
+              <span aria-hidden="true">✓ </span>
+              {studyCorrect} correct · <span aria-hidden="true">✗ </span>
+              {studyIncorrect} incorrect
+            </p>
+          )}
         </div>
       </header>
 
@@ -233,33 +300,81 @@ export default function QuizPage() {
           <fieldset className="question" key={question.attempt_question_id}>
             <legend className="question__text">{question.question_text}</legend>
             <div className="options">
-              {question.options.map((opt) => (
-                <label key={opt.id} className={`option${selected === opt.id ? " option--selected" : ""}`}>
-                  <input
-                    type="radio"
-                    name={`q-${question.attempt_question_id}`}
-                    value={opt.id}
-                    checked={selected === opt.id}
-                    onChange={() => select(question.attempt_question_id, opt.id)}
-                  />
-                  <span className="option__label" aria-hidden="true">
-                    {opt.label}
-                  </span>
-                  <span className="option__text">
-                    <span className="visually-hidden">Option {opt.label}: </span>
-                    {opt.text}
-                  </span>
-                </label>
-              ))}
+              {question.options.map((opt) => {
+                const isCorrect = fb != null && opt.id === fb.correct_option_id;
+                const isWrongPick = fb != null && !fb.is_correct && opt.id === selected;
+                return (
+                  <label
+                    key={opt.id}
+                    className={[
+                      "option",
+                      selected === opt.id ? "option--selected" : "",
+                      locked ? "option--locked" : "",
+                      isCorrect ? "option--correct" : "",
+                      isWrongPick ? "option--incorrect" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    <input
+                      type="radio"
+                      name={`q-${question.attempt_question_id}`}
+                      value={opt.id}
+                      checked={selected === opt.id}
+                      disabled={locked}
+                      onChange={() => select(question.attempt_question_id, opt.id)}
+                    />
+                    <span className="option__label" aria-hidden="true">
+                      {opt.label}
+                    </span>
+                    <span className="option__text">
+                      <span className="visually-hidden">Option {opt.label}: </span>
+                      {opt.text}
+                      {isCorrect && <span className="option__tag">✓ Correct answer</span>}
+                      {isWrongPick && <span className="option__tag">✗ Your answer</span>}
+                    </span>
+                  </label>
+                );
+              })}
             </div>
+            {fb && (
+              <p
+                className={`study-feedback study-feedback--${fb.is_correct ? "correct" : "incorrect"}`}
+                role="status"
+                data-testid="study-feedback"
+              >
+                {fb.is_correct ? (
+                  <>
+                    <span aria-hidden="true">✓ </span>Correct!
+                  </>
+                ) : (
+                  <>
+                    <span aria-hidden="true">✗ </span>Incorrect. The correct answer is{" "}
+                    <strong>
+                      {correctOption?.label}. {correctOption?.text}
+                    </strong>
+                    .
+                  </>
+                )}
+              </p>
+            )}
             <div className="question__footer">
-              <SaveIndicator
-                status={currentStatus}
-                hasAnswer={selected != null}
-                error={saveErrors[question.attempt_question_id]}
-                onRetry={() => void persist(question.attempt_question_id, selected)}
-              />
-              {selected != null && (
+              {study ? (
+                <StudyIndicator
+                  status={currentStatus}
+                  hasAnswer={selected != null}
+                  error={saveErrors[question.attempt_question_id]}
+                  onRetry={() => retry(question.attempt_question_id)}
+                />
+              ) : (
+                <SaveIndicator
+                  status={currentStatus}
+                  hasAnswer={selected != null}
+                  error={saveErrors[question.attempt_question_id]}
+                  onRetry={() => void persist(question.attempt_question_id, selected)}
+                />
+              )}
+              {selected != null && !study && (
                 <button
                   type="button"
                   className="btn btn--link"
@@ -290,6 +405,31 @@ export default function QuizPage() {
             </button>
           </div>
 
+          {studyComplete && (
+            <section className="study-summary" aria-labelledby="study-summary-title" data-testid="study-summary">
+              <h2 id="study-summary-title" className="study-summary__title">
+                Study session complete
+              </h2>
+              <p>
+                You answered all {total} questions: <strong>{studyCorrect} correct</strong> and{" "}
+                <strong>{studyIncorrect} incorrect</strong> ({((studyCorrect * 100) / total).toFixed(2)}%).
+              </p>
+              {submitError && (
+                <p className="alert alert--error" role="alert">
+                  {submitError}
+                </p>
+              )}
+              <div className="button-row">
+                <button type="button" className="btn btn--primary" onClick={() => void submit()} disabled={submitting}>
+                  {submitting ? "Finishing…" : "See full summary"}
+                </button>
+                <Link className="btn btn--secondary" to="/">
+                  Back to quiz selection
+                </Link>
+              </div>
+            </section>
+          )}
+
           {failedIds.length > 0 && (
             <div className="alert alert--error" role="alert">
               <p>
@@ -311,15 +451,33 @@ export default function QuizPage() {
               currentIndex={currentIndex}
               selections={selections}
               saveStatus={saveStatus}
+              feedback={study ? feedback : undefined}
               onJump={goTo}
             />
             <p className="palette-legend">
-              <span className="legend-item">
-                <span className="legend-swatch legend-swatch--answered" aria-hidden="true">
-                  ✓
+              {study ? (
+                <>
+                  <span className="legend-item">
+                    <span className="legend-swatch legend-swatch--right" aria-hidden="true">
+                      ✓
+                    </span>
+                    Correct
+                  </span>
+                  <span className="legend-item">
+                    <span className="legend-swatch legend-swatch--wrong" aria-hidden="true">
+                      ✗
+                    </span>
+                    Incorrect
+                  </span>
+                </>
+              ) : (
+                <span className="legend-item">
+                  <span className="legend-swatch legend-swatch--answered" aria-hidden="true">
+                    ✓
+                  </span>
+                  Answered
                 </span>
-                Answered
-              </span>
+              )}
               <span className="legend-item">
                 <span className="legend-swatch" aria-hidden="true" />
                 Unanswered
@@ -332,21 +490,29 @@ export default function QuizPage() {
           </details>
           <p className="sr-status" role="status" aria-live="polite">
             {savingCount > 0
-              ? "Saving…"
+              ? study
+                ? "Checking…"
+                : "Saving…"
               : failedIds.length > 0
-                ? `${failedIds.length} not saved`
+                ? `${failedIds.length} not ${study ? "checked" : "saved"}`
                 : Object.keys(saveStatus).length > 0
-                  ? "All answers saved"
+                  ? study
+                    ? "All answers recorded"
+                    : "All answers saved"
                   : ""}
           </p>
           <button type="button" className="btn btn--primary btn--block" onClick={() => setDialogOpen(true)}>
-            Submit quiz
+            {study ? "Finish session" : "Submit quiz"}
           </button>
         </aside>
       </div>
 
       {dialogOpen && (
-        <ConfirmDialog title="Submit this quiz?" onClose={() => setDialogOpen(false)} busy={submitting}>
+        <ConfirmDialog
+          title={study ? "Finish this study session?" : "Submit this quiz?"}
+          onClose={() => setDialogOpen(false)}
+          busy={submitting}
+        >
           <dl className="dialog__counts">
             <div>
               <dt>Answered</dt>
@@ -359,15 +525,15 @@ export default function QuizPage() {
           </dl>
           {unanswered > 0 && (
             <p className="alert alert--warning">
-              You have {unanswered} unanswered {unanswered === 1 ? "question" : "questions"}. Submit anyway?
-              Unanswered questions score zero.
+              You have {unanswered} unanswered {unanswered === 1 ? "question" : "questions"}.{" "}
+              {study ? "Finish anyway?" : "Submit anyway?"} Unanswered questions score zero.
             </p>
           )}
           {pendingIds.length > 0 && (
             <div className="alert alert--error" role="alert">
               <p>
                 {failedIds.length > 0
-                  ? `${failedIds.length} ${failedIds.length === 1 ? "answer is" : "answers are"} not saved yet. Retry saving before submitting so they are graded.`
+                  ? `${failedIds.length} ${failedIds.length === 1 ? "answer is" : "answers are"} not saved yet. Retry saving before ${study ? "finishing" : "submitting"} so they are graded.`
                   : "Some answers are still saving. Please wait a moment."}
               </p>
               {failedIds.length > 0 && (
@@ -377,7 +543,11 @@ export default function QuizPage() {
               )}
             </div>
           )}
-          <p>Submission is final for this attempt. Correct answers are shown after you submit.</p>
+          <p>
+            {study
+              ? "Finishing ends this session and shows your summary and full answer review."
+              : "Submission is final for this attempt. Correct answers are shown after you submit."}
+          </p>
           {submitError && (
             <p className="alert alert--error" role="alert">
               {submitError}
@@ -398,13 +568,38 @@ export default function QuizPage() {
               onClick={() => void submit()}
               disabled={submitting || pendingIds.length > 0}
             >
-              {submitting ? "Submitting…" : "Submit quiz"}
+              {submitting ? "Submitting…" : study ? "Finish session" : "Submit quiz"}
             </button>
           </div>
         </ConfirmDialog>
       )}
     </div>
   );
+}
+
+function StudyIndicator({
+  status,
+  hasAnswer,
+  error,
+  onRetry,
+}: {
+  status: SaveStatus | undefined;
+  hasAnswer: boolean;
+  error?: string;
+  onRetry: () => void;
+}) {
+  if (status === "saving") return <span className="save save--saving">Checking your answer…</span>;
+  if (status === "error")
+    return (
+      <span className="save save--error">
+        <span aria-hidden="true">⚠ </span>Could not check your answer{error ? ` (${error})` : ""}. Your choice is kept.{" "}
+        <button type="button" className="btn btn--link" onClick={onRetry}>
+          Retry
+        </button>
+      </span>
+    );
+  if (!hasAnswer) return <span className="save">Choose an answer to check it. Each question allows one try.</span>;
+  return <span className="save" />;
 }
 
 function SaveIndicator({

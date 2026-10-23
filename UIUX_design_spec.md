@@ -116,6 +116,9 @@ These are design guidelines, not hard dependencies on a specific CSS framework.
 
 ## 10. Implementation notes (as built)
 
+- **Mode selector (home):** a labelled radio group, *Quiz Mode* (default) and *Study Mode*, each with a one-line description. It applies to every week card and the Overall Quiz; **Resume** is offered only for an attempt of the selected mode.
+- **Study Mode quiz screen:** the scope line reads "… · Study Mode"; a tally shows ✓ correct and ✗ incorrect. After the first choice the options lock (disabled radios); the correct option turns green with "✓ Correct answer", a wrong pick turns red (dashed border) with "✗ Your answer", and a message reads "Correct!" or "Incorrect. The correct answer is B. …". Colour is never the only cue. Palette buttons show ✓/✗. When every question is answered a "Study session complete" summary appears with *See full summary* (opens the standard results). *Finish session* replaces *Submit quiz*. Quiz Mode screens are unchanged and never show green/red before submission.
+
 - The question palette sits in a side panel on desktop and in a collapsible "Go to question" section on narrow screens (open by default for 10-question quizzes). Answered = filled with a check mark, unanswered = outlined, current = thick ring plus `aria-current`, not saved = dashed border with "!".
 - Selecting an option saves immediately; the footer shows *Saving...*, *Answer saved*, or *Not saved ... Retry*. The confirmation dialog blocks submission while any answer is unsaved and offers *Retry saving*.
 - The confirmation dialog is a custom modal with a focus trap; Escape or *Review answers* closes it and focus returns to the Submit button.

@@ -83,6 +83,21 @@ def save_answer(
     return quiz.save_answer(session, attempt_id, token, attempt_question_id, body.selected_option_id)
 
 
+@router.post(
+    "/attempts/{attempt_id}/questions/{attempt_question_id}/study-answer",
+    response_model=schemas.StudyAnswerChecked,
+)
+def check_study_answer(
+    attempt_id: uuid.UUID,
+    attempt_question_id: uuid.UUID,
+    body: schemas.StudyAnswerRequest,
+    session: SessionDep,
+    token: TokenDep,
+) -> schemas.StudyAnswerChecked:
+    """Study Mode only: lock in an answer and reveal whether it is correct."""
+    return quiz.check_study_answer(session, attempt_id, token, attempt_question_id, body.selected_option_id)
+
+
 @router.post("/attempts/{attempt_id}/submit", response_model=schemas.AttemptResult)
 def submit_attempt(
     attempt_id: uuid.UUID,

@@ -14,6 +14,8 @@ export default function HomePage() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [starting, setStarting] = useState<string | null>(null);
   const [startError, setStartError] = useState<string | null>(null);
+  // Quiz Mode is the default; Study Mode reveals each answer immediately.
+  const [studyMode, setStudyMode] = useState(false);
 
   const load = useCallback(async () => {
     setLoadError(null);
@@ -36,7 +38,7 @@ export default function HomePage() {
     setStarting(scopeKey(scope));
     setStartError(null);
     try {
-      const id = await startAttempt(scope.mode, scope.weekNo);
+      const id = await startAttempt(scope.mode, scope.weekNo, studyMode);
       navigate(`/attempts/${id}`);
     } catch (err) {
       setStartError(err instanceof ApiError ? err.message : "Could not start the quiz. Please try again.");
@@ -49,9 +51,29 @@ export default function HomePage() {
       <h1 className="page-title">Conservation Geography Quiz</h1>
       <p className="lede">Choose a week to practice or take the full 120-question test.</p>
       <p className="hint">
-        Questions and answer options are shuffled for every new attempt. Your answers are saved as you go, and the
-        correct answers are shown after you submit.
+        Questions and answer options are shuffled for every new attempt, and your answers are saved as you go. Choose a
+        mode below: Quiz Mode shows the correct answers after you submit; Study Mode shows them as you answer.
       </p>
+
+      <fieldset className="mode-select">
+        <legend className="mode-select__legend">Mode</legend>
+        <label className={`mode-option${!studyMode ? " mode-option--active" : ""}`}>
+          <input type="radio" name="quiz-mode" checked={!studyMode} onChange={() => setStudyMode(false)} />
+          <span className="mode-option__body">
+            <span className="mode-option__title">Quiz Mode</span>
+            <span className="mode-option__desc">Answer every question, then submit to see your score and answers.</span>
+          </span>
+        </label>
+        <label className={`mode-option${studyMode ? " mode-option--active" : ""}`}>
+          <input type="radio" name="quiz-mode" checked={studyMode} onChange={() => setStudyMode(true)} />
+          <span className="mode-option__body">
+            <span className="mode-option__title">Study Mode</span>
+            <span className="mode-option__desc">
+              See whether each answer is correct as soon as you choose it. Each question locks after one try.
+            </span>
+          </span>
+        </label>
+      </fieldset>
 
       {startError && (
         <div className="alert alert--error" role="alert">
@@ -84,6 +106,7 @@ export default function HomePage() {
               count={catalogue.overall.question_count}
               available={catalogue.overall.available}
               scope={{ mode: "overall", weekNo: null }}
+              studyMode={studyMode}
               starting={starting}
               onStart={begin}
               featured
@@ -102,6 +125,7 @@ export default function HomePage() {
                     count={w.question_count}
                     available={w.available}
                     scope={{ mode: "weekly", weekNo: w.week_no }}
+                    studyMode={studyMode}
                     starting={starting}
                     onStart={begin}
                   />
@@ -121,17 +145,30 @@ interface QuizCardProps {
   count: number;
   available: boolean;
   scope: Scope;
+  studyMode: boolean;
   starting: string | null;
   onStart: (scope: Scope) => void;
   featured?: boolean;
   headingId?: string;
 }
 
-function QuizCard({ title, description, count, available, scope, starting, onStart, featured, headingId }: QuizCardProps) {
+function QuizCard({
+  title,
+  description,
+  count,
+  available,
+  scope,
+  studyMode,
+  starting,
+  onStart,
+  featured,
+  headingId,
+}: QuizCardProps) {
   const key = scopeKey(scope);
   const isStarting = starting === key;
-  const resume = attemptStore.inProgressFor(scope.mode, scope.weekNo);
+  const resume = attemptStore.inProgressFor(scope.mode, scope.weekNo, studyMode);
   const countText = `${count} ${count === 1 ? "question" : "questions"}`;
+  const name = studyMode ? `${title} in Study Mode` : title;
 
   return (
     <article className={`quiz-card${featured ? " quiz-card--featured" : ""}`}>
@@ -146,7 +183,7 @@ function QuizCard({ title, description, count, available, scope, starting, onSta
       <div className="quiz-card__actions">
         {resume && (
           <Link className="btn btn--secondary" to={`/attempts/${resume.attemptId}`}>
-            Resume <span className="visually-hidden">{title}</span>
+            Resume <span className="visually-hidden">{name}</span>
           </Link>
         )}
         <button
@@ -154,7 +191,7 @@ function QuizCard({ title, description, count, available, scope, starting, onSta
           className="btn btn--primary"
           disabled={!available || starting !== null}
           onClick={() => onStart(scope)}
-          aria-label={`${resume ? "Start a new attempt of" : "Start"} ${title}, ${countText}`}
+          aria-label={`${resume ? "Start a new attempt of" : "Start"} ${name}, ${countText}`}
         >
           {isStarting ? "Starting…" : resume ? "Start new" : "Start"}
         </button>

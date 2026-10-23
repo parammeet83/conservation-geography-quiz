@@ -290,6 +290,7 @@ The implemented schema follows sections 3–4 with these deliberate changes:
 - **Displayed options are tied to the same question at the database level.** `attempt_question_options` has an extra `question_id` column with two composite foreign keys: `(attempt_question_id, question_id) -> attempt_questions(id, question_id)` (requires `UNIQUE (id, question_id)` on `attempt_questions`) and `(question_id, option_id) -> options(question_id, id)`.
 - **`seed_imports`** (`seed_sha256` PK, `source_pdf_sha256`, `question_count`, `imported_at`) records each distinct seed file loaded (the import-version marker from section 7).
 - `ix_questions_active_week (is_active, source_week)` supports catalogue and attempt queries.
+- **Study Mode (revision `0002_attempt_study_mode`):** `quiz_attempts.study_mode BOOLEAN NOT NULL DEFAULT false`. Existing attempts are Quiz Mode. In Study Mode, `attempt_questions.is_correct` is set when the first answer is recorded (and recomputed identically at submission); the question bank tables are unchanged.
 - All timestamps are returned in UTC (the connection sets `timezone=UTC`).
 
 ## 7. Deletion and migrations

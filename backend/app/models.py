@@ -106,6 +106,8 @@ class QuizAttempt(Base):
     access_token_hash: Mapped[str] = mapped_column(Text, nullable=False)
     mode: Mapped[str] = mapped_column(Text, nullable=False)
     week_no: Mapped[int | None] = mapped_column(SmallInteger)
+    # Study Mode reveals each answer's correctness as soon as it is chosen and locks the question.
+    study_mode: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
     status: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("'in_progress'"))
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
